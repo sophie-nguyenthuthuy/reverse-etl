@@ -1,5 +1,4 @@
 from typing import Any
-from simple_salesforce import Salesforce, SalesforceLogin
 from ..settings import settings
 from ..logger import get_logger
 from .base import BaseDestination
@@ -19,6 +18,7 @@ class SalesforceDestination(BaseDestination):
     """
 
     def __init__(self, params: dict[str, Any]) -> None:
+        from simple_salesforce import Salesforce  # lazy import — optional dependency
         super().__init__(params)
         self._object_name = params["object_name"]
         self._operation = params.get("operation", "upsert")

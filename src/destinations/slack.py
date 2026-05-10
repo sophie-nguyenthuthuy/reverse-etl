@@ -1,6 +1,4 @@
 from typing import Any
-from slack_sdk import WebClient
-from slack_sdk.errors import SlackApiError
 from ..settings import settings
 from ..logger import get_logger
 from .base import BaseDestination
@@ -21,6 +19,7 @@ class SlackDestination(BaseDestination):
 
     def __init__(self, params: dict[str, Any]) -> None:
         super().__init__(params)
+        from slack_sdk import WebClient  # lazy import — optional dependency
         token = params.get("token", settings.slack_bot_token)
         self._client = WebClient(token=token)
         self._channel = params["channel"]
@@ -37,6 +36,7 @@ class SlackDestination(BaseDestination):
         self._client.chat_postMessage(channel=self._channel, text=text)
 
     def send(self, records: list[dict[str, Any]]) -> int:
+        from slack_sdk.errors import SlackApiError  # lazy import
         if not records:
             return 0
 

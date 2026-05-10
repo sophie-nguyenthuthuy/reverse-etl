@@ -1,7 +1,4 @@
 from typing import Any
-import hubspot
-from hubspot.crm.contacts import SimplePublicObjectInputForCreate, ApiException
-from hubspot.crm.contacts.models import SimplePublicObjectInput
 from ..settings import settings
 from ..logger import get_logger
 from .base import BaseDestination
@@ -20,6 +17,7 @@ class HubSpotDestination(BaseDestination):
     """
 
     def __init__(self, params: dict[str, Any]) -> None:
+        import hubspot  # lazy import — optional dependency
         super().__init__(params)
         token = params.get("access_token", settings.hubspot_access_token)
         self._client = hubspot.Client.create(access_token=token)
@@ -28,8 +26,8 @@ class HubSpotDestination(BaseDestination):
         self._batch_size = min(int(params.get("batch_size", 100)), 100)
 
     def _upsert_batch(self, batch: list[dict[str, Any]]) -> int:
-        from hubspot.crm.contacts import BatchInputSimplePublicObjectBatchInputUpsert
-        from hubspot.crm.contacts.models import SimplePublicObjectBatchInputUpsert
+        from hubspot.crm.contacts import BatchInputSimplePublicObjectBatchInputUpsert  # type: ignore
+        from hubspot.crm.contacts.models import SimplePublicObjectBatchInputUpsert  # type: ignore
 
         inputs = [
             SimplePublicObjectBatchInputUpsert(

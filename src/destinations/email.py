@@ -1,6 +1,4 @@
 from typing import Any
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
 from ..settings import settings
 from ..logger import get_logger
 from .base import BaseDestination
@@ -45,6 +43,9 @@ class EmailDestination(BaseDestination):
         )
 
     def send(self, records: list[dict[str, Any]]) -> int:
+        from sendgrid import SendGridAPIClient  # lazy import — optional dependency
+        from sendgrid.helpers.mail import Mail
+
         rows_html = self._records_to_html(records)
         html_body = self._body_template.format(rows_html=rows_html, count=len(records))
 
